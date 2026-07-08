@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..800&display=swap');
+@import "tailwindcss";
+
+.font-display-cut {
+  font-family: 'Inter', sans-serif;
+  font-optical-sizing: auto;
+  font-variation-settings: "opsz" 32;
+}
+
+@layer base {
+  body {
+    background-color: #e5e7eb;
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Custom styles for high-fidelity fintech app */
+
+/* Stitching dashed outline */
+.stitch-border {
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+}
+
+/* Glassmorphism effects */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card pocket pattern texture */
+.leather-texture {
+  background-color: #1e1e20;
+  background-image: 
+    radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0),
+    radial-gradient(rgba(255,255,255,0.03) 1px, transparent 0);
+  background-size: 4px 4px;
+  background-position: 0 0, 2px 2px;
+}
+
+/* Custom slow rotation for frozen snowflake badge */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 12s linear infinite;
+}

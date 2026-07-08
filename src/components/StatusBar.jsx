@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function StatusBar() {
   return (
-    <div className="flex justify-between items-center px-6 pt-3 pb-2 text-[13px] font-semibold text-black select-none">
+    <div className="hidden md:flex justify-between items-center px-6 pt-3 pb-2 text-[13px] font-semibold text-black select-none">
       {/* Time */}
       <span className="w-14 text-left">9:41</span>
       

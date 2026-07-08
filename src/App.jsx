@@ -27,11 +27,13 @@ function App() {
         <>
           {/* 3. Screen switching content based on activeTab */}
           {activeTab === 'home' && (
-            <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-none pb-[105px]">
+            <div className="flex-1 flex flex-col h-full overflow-hidden">
               <Header />
-              <BalanceCard />
-              <ActionRow onFreezeClick={() => setShowFreeze(true)} />
-              <PaymentHistory />
+              <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-none pb-[105px]">
+                <BalanceCard />
+                <ActionRow onFreezeClick={() => setShowFreeze(true)} />
+                <PaymentHistory />
+              </div>
             </div>
           )}
 

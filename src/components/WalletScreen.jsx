@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { Eye, EyeSlash, CaretRight, AppleLogo, AmazonLogo } from '@phosphor-icons/react';
 import Header from './Header';
 
+// Instantiate formatter once to optimize render performance
+const currencyFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+});
+
 // Custom Flipkart Icon
 function FlipkartIcon() {
   return (
@@ -32,11 +39,7 @@ export default function WalletScreen() {
 
   // Helper to format currency
   const formatCurrency = (val) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-    }).format(val);
+    return currencyFormatter.format(val);
   };
 
   return (
@@ -120,9 +123,9 @@ export default function WalletScreen() {
                   style={{ width: `${(limitVal / maxLimit) * 100}%` }}
                 ></div>
 
-                {/* 3. Draggable Handle */}
+                {/* 3. Draggable Handle - Removed transition-all duration-75 to prevent drag lag */}
                 <div 
-                  className="absolute w-5 h-5 bg-blue-600 border-2 border-white rounded-full shadow-md pointer-events-none transition-all duration-75 flex items-center justify-center"
+                  className="absolute w-5 h-5 bg-blue-600 border-2 border-white rounded-full shadow-md pointer-events-none flex items-center justify-center"
                   style={{ left: `calc(${(limitVal / maxLimit) * 100}% - 10px)` }}
                 >
                   <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
@@ -142,11 +145,15 @@ export default function WalletScreen() {
               </div>
 
               {/* Progress Labels */}
-              <div className="flex justify-between items-center text-[11px] font-medium leading-none">
-                <span className="text-gray-500">Today Limits</span>
-                <div className="flex items-center gap-1 font-mono">
-                  <span className="text-gray-800 font-bold">{formatCurrency(limitVal)}</span>
-                  <span className="text-gray-400">/{formatCurrency(maxLimit)}</span>
+              <div className="flex justify-between items-baseline pt-1">
+                <span className="text-[12px] font-medium text-gray-500">Today Limits</span>
+                <div className="flex items-baseline gap-1 font-mono">
+                  <span className="text-[19px] font-bold text-gray-900 leading-none">
+                    {formatCurrency(limitVal)}
+                  </span>
+                  <span className="text-[15px] font-medium text-gray-400 leading-none">
+                    /{formatCurrency(maxLimit)}
+                  </span>
                 </div>
               </div>
             </div>

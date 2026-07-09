@@ -87,7 +87,7 @@ export default function AnalyticsScreen({ onBackToHome }) {
   const handleChartInteraction = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const x = clientX - rect.left;
+    const x = ((clientX - rect.left) / rect.width) * 342;
 
     // Find nearest point
     let closest = chartData[0];
@@ -207,7 +207,7 @@ export default function AnalyticsScreen({ onBackToHome }) {
         </div>
 
         {/* 3. Interactive Line/Area Chart */}
-        <div className="w-full bg-white rounded-[24px] p-4 shadow-sm border border-gray-50 flex flex-col relative overflow-hidden">
+        <div className="w-full h-[220px] bg-white rounded-[24px] p-4 shadow-sm border border-gray-50 flex flex-col relative overflow-hidden">
           
           {/* Custom SVG Drawing Area */}
           <div 
@@ -296,13 +296,13 @@ export default function AnalyticsScreen({ onBackToHome }) {
             <motion.div 
               className="absolute bg-white rounded-xl shadow-md border border-gray-100 p-2 px-3.5 flex flex-col text-left pointer-events-none z-20"
               style={{
-                left: `${activePoint.x}px`,
+                left: `${(activePoint.x / 342) * 100}%`,
                 top: `${activePoint.y - 38}px`,
               }}
               animate={{ 
                 x: "-50%",
                 y: "-50%",
-                left: `${activePoint.x}px`,
+                left: `${(activePoint.x / 342) * 100}%`,
                 top: `${activePoint.y - 38}px`
               }}
               transition={{ type: 'spring', stiffness: 380, damping: 26 }}

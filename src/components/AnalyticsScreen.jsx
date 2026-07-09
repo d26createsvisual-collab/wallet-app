@@ -219,8 +219,8 @@ export default function AnalyticsScreen({ onBackToHome }) {
 
         {/* 3. Interactive Line/Area Chart with explicit inline sizing */}
         <div 
-          style={{ height: '220px', width: '100%' }}
-          className="bg-white rounded-[24px] p-4 shadow-sm border border-gray-50 flex flex-col relative overflow-hidden"
+          style={{ height: '220px', width: '100%', flexShrink: 0 }}
+          className="bg-white rounded-[24px] p-4 shadow-sm border border-gray-50 flex flex-col relative overflow-hidden shrink-0"
         >
           {/* Custom SVG Drawing Area with explicit dimensions */}
           <div 

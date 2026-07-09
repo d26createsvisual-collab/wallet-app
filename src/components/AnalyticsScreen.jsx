@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CaretLeft, DotsThree } from '@phosphor-icons/react';
 
@@ -82,6 +82,15 @@ export default function AnalyticsScreen({ onBackToHome }) {
   // Default active point is the 5th (Nov 25, 2025)
   const [activePoint, setActivePoint] = useState(chartData[4]);
   const [isInteracting, setIsInteracting] = useState(false);
+  const [isChartReady, setIsChartReady] = useState(false);
+
+  // Option A: Delay mounting the chart until transitions are complete to guarantee accurate DOM sizing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsChartReady(true);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handles drag/hover along chart x-coordinates to select nearest point
   const handleChartInteraction = (e) => {
@@ -206,117 +215,131 @@ export default function AnalyticsScreen({ onBackToHome }) {
           </span>
         </div>
 
-        {/* 3. Interactive Line/Area Chart */}
-        <div className="w-full h-[220px] bg-white rounded-[24px] p-4 shadow-sm border border-gray-50 flex flex-col relative overflow-hidden">
-          
-          {/* Custom SVG Drawing Area */}
-          <div 
-            className="w-full h-[160px] relative mt-2 cursor-crosshair touch-none"
-            onMouseMove={handleChartInteraction}
-            onTouchMove={handleChartInteraction}
-            onMouseLeave={handleInteractionEnd}
-            onTouchEnd={handleInteractionEnd}
-          >
-            <svg 
-              className="w-full h-full" 
-              viewBox="0 0 342 160" 
-              preserveAspectRatio="none"
+        {/* 3. Interactive Line/Area Chart with explicit inline sizing */}
+        <div 
+          style={{ height: '220px', width: '100%' }}
+          className="bg-white rounded-[24px] p-4 shadow-sm border border-gray-50 flex flex-col relative overflow-hidden"
+        >
+          {isChartReady ? (
+            /* Custom SVG Drawing Area with explicit dimensions */
+            <div 
+              style={{ height: '160px', width: '100%' }}
+              className="relative mt-2 cursor-crosshair touch-none"
+              onMouseMove={handleChartInteraction}
+              onTouchMove={handleChartInteraction}
+              onMouseLeave={handleInteractionEnd}
+              onTouchEnd={handleInteractionEnd}
             >
-              <defs>
-                {/* Light blue area gradient fill */}
-                <linearGradient id="chart-area-fill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.25" />
-                  <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
-                </linearGradient>
-              </defs>
+              <svg 
+                style={{ height: '160px', width: '100%' }}
+                className="w-full h-full" 
+                viewBox="0 0 342 160" 
+                preserveAspectRatio="none"
+              >
+                <defs>
+                  {/* Light blue area gradient fill */}
+                  <linearGradient id="chart-area-fill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
 
-              {/* Grid vertical lines */}
-              <line x1="20" y1="10" x2="20" y2="150" stroke="#f1f5f9" strokeWidth="1" />
-              <line x1="80" y1="10" x2="80" y2="150" stroke="#f1f5f9" strokeWidth="1" />
-              <line x1="140" y1="10" x2="140" y2="150" stroke="#f1f5f9" strokeWidth="1" />
-              <line x1="200" y1="10" x2="200" y2="150" stroke="#f1f5f9" strokeWidth="1" />
-              <line x1="260" y1="10" x2="260" y2="150" stroke="#f1f5f9" strokeWidth="1" />
-              <line x1="320" y1="10" x2="320" y2="150" stroke="#f1f5f9" strokeWidth="1" />
+                {/* Grid vertical lines */}
+                <line x1="20" y1="10" x2="20" y2="150" stroke="#f1f5f9" strokeWidth="1" />
+                <line x1="80" y1="10" x2="80" y2="150" stroke="#f1f5f9" strokeWidth="1" />
+                <line x1="140" y1="10" x2="140" y2="150" stroke="#f1f5f9" strokeWidth="1" />
+                <line x1="200" y1="10" x2="200" y2="150" stroke="#f1f5f9" strokeWidth="1" />
+                <line x1="260" y1="10" x2="260" y2="150" stroke="#f1f5f9" strokeWidth="1" />
+                <line x1="320" y1="10" x2="320" y2="150" stroke="#f1f5f9" strokeWidth="1" />
 
-              {/* Vertical Dashed reference line for active point */}
-              <motion.line 
-                x1={activePoint.x} 
-                y1={10} 
-                x2={activePoint.x} 
-                y2={150} 
-                stroke="#3b82f6" 
-                strokeWidth="1.5" 
-                strokeDasharray="4 4"
-                animate={{ x1: activePoint.x, x2: activePoint.x }}
-                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-              />
-
-              {/* Area Gradient path */}
-              <path 
-                d="M 20,130 C 50,120 50,112 80,110 C 110,108 110,110 140,108 C 170,106 170,72 200,70 C 230,68 230,70 260,68 C 290,66 290,42 320,40 L 320,150 L 20,150 Z" 
-                fill="url(#chart-area-fill)" 
-              />
-
-              {/* Smooth Line Path */}
-              <path 
-                d="M 20,130 C 50,120 50,112 80,110 C 110,108 110,110 140,108 C 170,106 170,72 200,70 C 230,68 230,70 260,68 C 290,66 290,42 320,40" 
-                stroke="#2563eb" 
-                strokeWidth="2.5" 
-                fill="none" 
-                strokeLinecap="round"
-              />
-
-              {/* Static data points vertices */}
-              {chartData.map((pt, idx) => (
-                <circle 
-                  key={idx}
-                  cx={pt.x} 
-                  cy={pt.y} 
-                  r="4" 
-                  fill="white" 
-                  stroke="#2563eb" 
-                  strokeWidth="2" 
+                {/* Vertical Dashed reference line for active point */}
+                <motion.line 
+                  x1={activePoint.x} 
+                  y1={10} 
+                  x2={activePoint.x} 
+                  y2={150} 
+                  stroke="#3b82f6" 
+                  strokeWidth="1.5" 
+                  strokeDasharray="4 4"
+                  animate={{ x1: activePoint.x, x2: activePoint.x }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 28 }}
                 />
-              ))}
 
-              {/* Active Hover pulse vertex */}
-              <motion.circle 
-                cx={activePoint.x}
-                cy={activePoint.y}
-                r="6"
-                fill="rgba(37, 99, 235, 0.25)"
-                stroke="#2563eb"
-                strokeWidth="2.5"
-                animate={{ cx: activePoint.x, cy: activePoint.y }}
-                transition={{ type: 'spring', stiffness: 350, damping: 28 }}
-              />
-            </svg>
+                {/* Area Gradient path */}
+                <path 
+                  d="M 20,130 C 50,120 50,112 80,110 C 110,108 110,110 140,108 C 170,106 170,72 200,70 C 230,68 230,70 260,68 C 290,66 290,42 320,40 L 320,150 L 20,150 Z" 
+                  fill="url(#chart-area-fill)" 
+                />
 
-            {/* FLOATING TOOLTIP CARD */}
-            <motion.div 
-              className="absolute bg-white rounded-xl shadow-md border border-gray-100 p-2 px-3.5 flex flex-col text-left pointer-events-none z-20"
-              style={{
-                left: `${(activePoint.x / 342) * 100}%`,
-                top: `${activePoint.y - 38}px`,
-              }}
-              animate={{ 
-                x: "-50%",
-                y: "-50%",
-                left: `${(activePoint.x / 342) * 100}%`,
-                top: `${activePoint.y - 38}px`
-              }}
-              transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+                {/* Smooth Line Path */}
+                <path 
+                  d="M 20,130 C 50,120 50,112 80,110 C 110,108 110,110 140,108 C 170,106 170,72 200,70 C 230,68 230,70 260,68 C 290,66 290,42 320,40" 
+                  stroke="#2563eb" 
+                  strokeWidth="2.5" 
+                  fill="none" 
+                  strokeLinecap="round"
+                />
+
+                {/* Static data points vertices */}
+                {chartData.map((pt, idx) => (
+                  <circle 
+                    key={idx}
+                    cx={pt.x} 
+                    cy={pt.y} 
+                    r="4" 
+                    fill="white" 
+                    stroke="#2563eb" 
+                    strokeWidth="2" 
+                  />
+                ))}
+
+                {/* Active Hover pulse vertex */}
+                <motion.circle 
+                  cx={activePoint.x}
+                  cy={activePoint.y}
+                  r="6"
+                  fill="rgba(37, 99, 235, 0.25)"
+                  stroke="#2563eb"
+                  strokeWidth="2.5"
+                  animate={{ cx: activePoint.x, cy: activePoint.y }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 28 }}
+                />
+              </svg>
+
+              {/* FLOATING TOOLTIP CARD */}
+              <motion.div 
+                className="absolute bg-white rounded-xl shadow-md border border-gray-100 p-2 px-3.5 flex flex-col text-left pointer-events-none z-20"
+                style={{
+                  left: `${(activePoint.x / 342) * 100}%`,
+                  top: `${activePoint.y - 38}px`,
+                }}
+                animate={{ 
+                  x: "-50%",
+                  y: "-50%",
+                  left: `${(activePoint.x / 342) * 100}%`,
+                  top: `${activePoint.y - 38}px`
+                }}
+                transition={{ type: 'spring', stiffness: 380, damping: 26 }}
+              >
+                <span className="text-[12px] font-extrabold text-gray-900 leading-none mb-1">
+                  {activePoint.valueStr}
+                </span>
+                <span className="text-[9px] font-semibold text-gray-400 leading-none">
+                  {activePoint.date}
+                </span>
+                {/* Caret pointing down */}
+                <div className="absolute -bottom-[3.5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45 border-r border-b border-gray-100/60"></div>
+              </motion.div>
+            </div>
+          ) : (
+            /* Explicit height placeholder block during transition */
+            <div 
+              style={{ height: '160px', width: '100%' }}
+              className="flex items-center justify-center text-gray-300 font-mono text-[10px] mt-2 bg-gray-50/40 rounded-2xl"
             >
-              <span className="text-[12px] font-extrabold text-gray-900 leading-none mb-1">
-                {activePoint.valueStr}
-              </span>
-              <span className="text-[9px] font-semibold text-gray-400 leading-none">
-                {activePoint.date}
-              </span>
-              {/* Caret pointing down */}
-              <div className="absolute -bottom-[3.5px] left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45 border-r border-b border-gray-100/60"></div>
-            </motion.div>
-          </div>
+              Loading metrics...
+            </div>
+          )}
 
           {/* X Axis Labels */}
           <div className="flex justify-between items-center text-[10px] font-bold text-gray-400 px-1 mt-1">
